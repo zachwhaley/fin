@@ -1,3 +1,5 @@
+#include "builtin.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,6 +7,12 @@
 
 #include <unistd.h>
 #include <sys/wait.h>
+
+struct command builtins[] = {
+    { "exit", cmd_exit },
+    // End of builtins
+    { '\0', NULL }
+};
 
 char** parsecmd(char *cmd)
 {
@@ -33,13 +41,21 @@ int main(int argc, const char *argv[])
         fgets(cmd, sizeof cmd, stdin);
         char **args = parsecmd(cmd);
 
+        // Run builtin command
+        for (int i = 0; builtins[i].cmd; i++) {
+            if (strcmp(builtins[i].cmd, args[0]) == 0) {
+                builtins[i].run(args);
+                goto end;
+            }
+        }
+
         // Run command
         pid_t pid = fork();
         if (pid == 0)
             execvp(cmd, args);
         else
             waitpid(pid, NULL, 0);
-
+    end:
         free(args);
     }
     return 0;
