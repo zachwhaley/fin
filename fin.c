@@ -8,21 +8,14 @@
 
 char** parsecmd(char *cmd)
 {
-    size_t len = 100;
-    char **args = malloc(len * sizeof(char*));
-
-    const char tok[] = { ' ', '\n' };
+    char **args = calloc(1, strlen(cmd));
 
     int ndx = 0;
-    char *arg = strtok(cmd, tok);
+    char toks[] = {' ', '\n'};
+    char *arg = strtok(cmd, toks);
     while (arg) {
-        args[ndx] = arg;
-        ndx++;
-        if (ndx >= len) {
-            len += len;
-            args = realloc(args, len * sizeof(char*));
-        }
-        arg = strtok(NULL, tok);
+        args[ndx++] = arg;
+        arg = strtok(NULL, toks);
     }
     args[ndx] = '\0';
     return args;
@@ -34,7 +27,7 @@ int main(int argc, const char *argv[])
 
     while (true) {
         // Print prompt
-        printf("𝆑 ");
+        printf("$ ");
 
         // Get user command
         fgets(cmd, sizeof cmd, stdin);
