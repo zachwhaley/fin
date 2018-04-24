@@ -7,5 +7,6 @@ struct command {
 };
 
 void cmd_exit(char **args);
+void cmd_cd(char **args);
 
 #endif /* __FIN_BUILTIN_H__ */
