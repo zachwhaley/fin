@@ -12,6 +12,7 @@ struct command builtins[] = {
     { "exit", cmd_exit },
     { "cd",   cmd_cd },
     { "get",  cmd_get },
+    { "set",  cmd_set },
     // End of builtins
     { '\0', NULL }
 };
