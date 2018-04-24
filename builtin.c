@@ -1,8 +1,9 @@
 #include "builtin.h"
 
+#include <unistd.h>
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 
 void cmd_exit(char **args)
