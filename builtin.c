@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void cmd_exit(char **args)
+_Noreturn void cmd_exit(char **args)
 {
     int code = args[1] ? atoi(args[1]) : 0;
     exit(code);
