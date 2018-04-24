@@ -19,16 +19,15 @@ struct command builtins[] = {
 
 char** parsecmd(char *cmd)
 {
-    char **args = calloc(1, strlen(cmd));
+    char **args = calloc(1, strlen(cmd) * sizeof(char*));
 
     int ndx = 0;
     char toks[] = {' ', '\n'};
     char *arg = strtok(cmd, toks);
     while (arg) {
-        args[ndx++] = arg;
+        args[ndx++] = strdup(arg);
         arg = strtok(NULL, toks);
     }
-    args[ndx] = '\0';
     return args;
 }
 
@@ -59,6 +58,9 @@ int main(int argc, const char *argv[])
         else
             waitpid(pid, NULL, 0);
     end:
+        for (int i = 0; args[i]; i++) {
+            free(args[i]);
+        }
         free(args);
     }
     return 0;
