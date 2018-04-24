@@ -13,8 +13,9 @@ void cmd_exit(char **args)
 
 void cmd_cd(char **args)
 {
-    if (args[1]) {
-        chdir(args[1]);
+    char *dir = args[1] ?: getenv("HOME");
+    if (dir) {
+        chdir(dir);
     }
 }
 
