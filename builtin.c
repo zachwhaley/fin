@@ -6,13 +6,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-_Noreturn void cmd_exit(char **args)
+void fin_exit(char **args)
 {
     int code = args[1] ? atoi(args[1]) : 0;
     exit(code);
 }
 
-void cmd_cd(char **args)
+void fin_cd(char **args)
 {
     char *dir = args[1] ?: getenv("HOME");
     if (dir) {
@@ -20,7 +20,7 @@ void cmd_cd(char **args)
     }
 }
 
-void cmd_get(char **args)
+void fin_get(char **args)
 {
     for (int i = 1; args[i]; i++) {
         char *val = getenv(args[i]);
@@ -28,7 +28,7 @@ void cmd_get(char **args)
     }
 }
 
-void cmd_set(char **args)
+void fin_set(char **args)
 {
     for (int i = 1; args[i]; i++) {
         char *name = args[i];

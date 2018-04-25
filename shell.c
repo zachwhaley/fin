@@ -1,7 +1,20 @@
 #include "shell.h"
 
+#include "builtin.h"
+
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+
+struct Builtin* get_builtin(const char *cmd)
+{
+    int ndx;
+    for (ndx = 0; builtins[ndx].cmd; ndx++) {
+        if (strcmp(builtins[ndx].cmd, args[0]) == 0)
+            break;
+    }
+    return &builtins[ndx];
+}
 
 static char** split(char *str, const char *sep)
 {
@@ -19,12 +32,30 @@ static char** split(char *str, const char *sep)
     return res;
 }
 
+static char** parsecmd(char *cmd)
+{
+    return split(cmd, " \n");
+}
+
 char** splitpipes(char *cmd)
 {
     return split(cmd, "|");
 }
 
-char** parsecmd(char *cmd)
+void runcommand(char *cmd)
 {
-    return split(cmd, " \n");
+    char **args = split(cmd, " \n");
+
+    // Run builtin command
+
+    // Run command
+    pid_t pid = fork();
+    if (pid == 0)
+        execvp(cmd, args);
+    else
+        waitpid(pid, NULL, 0);
+end:
+    for (int i = 0; args[i]; i++)
+        free(args[i]);
+    free(args);
 }
