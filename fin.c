@@ -37,7 +37,7 @@ int main(int argc, const char *argv[])
 
     while (true) {
         // Print prompt
-        printf("$ ");
+        printf("𝆑 ");
 
         // Get user command
         fgets(cmd, sizeof cmd, stdin);
