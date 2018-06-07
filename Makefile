@@ -1,4 +1,4 @@
-CFLAGS = -std=gnu11 -g -ggdb -Wall -Werror
+CFLAGS = -std=gnu11 -g -ggdb -Wall -Werror -MMD -MP
 
 PRGM  = fin
 SRCS := $(wildcard *.c)
@@ -8,12 +8,9 @@ DEPS := $(OBJS:.o=.d)
 all: $(PRGM)
 
 $(PRGM): $(OBJS)
-	$(CC) $(OBJS) $(LDLIBS) -o $(PRGM)
-
-%.o: %.c
-	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
+	$(CC) $(OBJS) -o $(PRGM)
 
 clean:
-	$(RM) -r $(OBJS) $(DEPS) $(PRGM)
+	$(RM) $(OBJS) $(DEPS) $(PRGM)
 
 -include $(DEPS)
