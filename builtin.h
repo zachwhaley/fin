@@ -1,14 +1,5 @@
-#ifndef __FIN_BUILTIN_H__
-#define __FIN_BUILTIN_H__
+#pragma once
 
-struct command {
-    const char *cmd;
-    void (*run)(char**);
-};
+typedef void (*Builtin)(char**);
 
-_Noreturn void cmd_exit(char **args);
-void cmd_cd(char **args);
-void cmd_get(char **args);
-void cmd_set(char **args);
-
-#endif /* __FIN_BUILTIN_H__ */
+Builtin find_builtin(const char *cmd);
