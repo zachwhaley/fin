@@ -1,57 +1,54 @@
 #include "builtin.h"
-
-#include <unistd.h>
-#include <sys/wait.h>
+#include "execute.h"
+#include "str.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 
-char** parsecmd(char *cmd)
+void read_cmd(char *input, int len)
 {
-    char **args = calloc(1, strlen(cmd) * sizeof(char*));
-
-    int ndx = 0;
-    char toks[] = {' ', '\n'};
-    char *arg = strtok(cmd, toks);
-    while (arg) {
-        args[ndx++] = strdup(arg);
-        arg = strtok(NULL, toks);
-    }
-    return args;
+    // Print prompt
+    printf("> ");
+    fgets(input, len, stdin);
 }
 
-int main(int argc, const char *argv[])
+void parse_cmd(char *input, char *cmd[])
 {
-    char cmd[BUFSIZ];
+    int ndx = 0;
+    char toks[] = {' ', '\n'};
+    char *arg = strtok(input, toks);
+    while (arg) {
+        cmd[ndx++] = arg;
+        arg = strtok(NULL, toks);
+    }
+    cmd[ndx] = NULL;
+}
+
+void exec_cmd(char *const cmd[])
+{
+    int i;
+    for (i = 0; builtins[i].name; i++) {
+        if (streq(builtins[i].name, cmd[0]))
+            break;
+    }
+    bltn_func builtin = builtins[i].func;
+
+    if (builtin)
+        builtin(cmd);
+    else
+        execute(cmd);
+}
+
+int main(int argc, char **argv)
+{
+    char input[1024];
+    char *cmd[128];
 
     while (true) {
-        // Print prompt
-        printf("𝆑 ");
-
-        // Get user command
-        fgets(cmd, sizeof cmd, stdin);
-        char **args = parsecmd(cmd);
-
-        // Run builtin command
-        Builtin builtin = find_builtin(args[0]);
-        if (builtin) {
-            builtin(args);
-            goto end;
-        }
-
-        // Run command
-        pid_t pid = fork();
-        if (pid == 0)
-            execvp(cmd, args);
-        else
-            waitpid(pid, NULL, 0);
-    end:
-        for (int i = 0; args[i]; i++) {
-            free(args[i]);
-        }
-        free(args);
+        read_cmd(input, sizeof input);
+        parse_cmd(input, cmd);
+        exec_cmd(cmd);
     }
-    return 0;
 }

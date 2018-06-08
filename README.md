@@ -2,7 +2,7 @@
 
 Short for Griffin and pronounced Finn
 
-fin is a simply made unix shell written in C
+fin is a simply made Unix shell written in C
 
 ## What You Need
 
@@ -14,15 +14,20 @@ $ sudo dnf install gcc
 
 ## What it Does
 
-Runs system commands from the shell.
+Navigates the system with `cd`.
 
-Use Ctrl-C to exit the shell.
+Sets and prints environment variables `set` and `get`.
+
+Runs system commands.
+
+Use `exit` command to exit fin.
 
 ## How to Use it
 
-```bash
+```sh
 $ make
 $ ./fin
-𝆑 ls
-fin  fin.c  fin.d  fin.o  LICENSE  Makefile  README.md
+> ls
+builtin.c  builtin.h  execute.c  execute.h  fin.c  LICENSE  Makefile  README.md  str.h
+> exit
 ```
