@@ -5,11 +5,9 @@ SRCS := $(wildcard *.c)
 OBJS := $(SRCS:.c=.o)
 DEPS := $(OBJS:.o=.d)
 
-all: $(PRGM)
-
 $(PRGM): $(OBJS)
-	$(CC) $(OBJS) -o $(PRGM)
 
+.PHONY: clean
 clean:
 	$(RM) $(OBJS) $(DEPS) $(PRGM)
 
