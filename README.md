@@ -29,5 +29,7 @@ $ make
 $ ./fin
 > ls
 builtin.c  builtin.h  execute.c  execute.h  fin.c  LICENSE  Makefile  README.md  str.h
+> ls | grep fin
+fin.c
 > exit
 ```

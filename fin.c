@@ -4,51 +4,57 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <stdbool.h>
+#include <sys/wait.h>
 
-void read_cmd(char *input, int len)
+void read_cmd(char *cmd, int len)
 {
     // Print prompt
     printf("> ");
-    fgets(input, len, stdin);
+    fgets(cmd, len, stdin);
 }
 
-void parse_cmd(char *input, char *cmd[])
+void exec_cmd(char *cmd)
 {
-    int ndx = 0;
-    char toks[] = {' ', '\n'};
-    char *arg = strtok(input, toks);
-    while (arg) {
-        cmd[ndx++] = arg;
-        arg = strtok(NULL, toks);
+    int in = STDIN_FILENO;
+    int out = STDOUT_FILENO;
+    int pipefd[2];
+
+    char *cmds[128];
+    split(cmd, cmds, "|");
+
+    for (int n = 0; cmds[n]; n++) {
+        char *args[128];
+        split(cmds[n], args, " \n");
+
+        int i;
+        for (i = 0; builtins[i].name; i++) {
+            if (streq(builtins[i].name, args[0]))
+                break;
+        }
+        bltn_func builtin = builtins[i].func;
+
+        if (builtin) {
+            builtin(args);
+        }
+        else {
+            pipe(pipefd);
+            out = cmds[n+1] ? pipefd[1] : STDOUT_FILENO;
+            execute(args, out, in);
+            in = pipefd[0];
+        }
     }
-    cmd[ndx] = NULL;
+    // Wait for all child processes
+    while (wait(NULL) > 0);
 }
 
-void exec_cmd(char *const cmd[])
+int main()
 {
-    int i;
-    for (i = 0; builtins[i].name; i++) {
-        if (streq(builtins[i].name, cmd[0]))
-            break;
-    }
-    bltn_func builtin = builtins[i].func;
-
-    if (builtin)
-        builtin(cmd);
-    else
-        execute(cmd);
-}
-
-int main(int argc, char **argv)
-{
-    char input[1024];
-    char *cmd[128];
-
+    char cmd[1024];
     while (true) {
-        read_cmd(input, sizeof input);
-        parse_cmd(input, cmd);
+        read_cmd(cmd, sizeof cmd);
         exec_cmd(cmd);
     }
 }
