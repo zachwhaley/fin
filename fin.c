@@ -29,22 +29,27 @@ void exec_cmd(char *cmd)
         char *args[128];
         split(cmds[n], args, " \n");
 
+        // Look for builtin functions
         int i;
         for (i = 0; builtins[i].name; i++) {
             if (streq(builtins[i].name, args[0]))
                 break;
         }
-        bltn_func builtin = builtins[i].func;
+        BuiltinFunc builtin = builtins[i].func;
+
+        // Pipe and setup STDOUT
+        pipe(pipefd);
+        // If there is another command, pipe output to the next command; otherwise pipe output to stdout.
+        out = cmds[n+1] ? pipefd[1] : STDOUT_FILENO;
 
         if (builtin) {
-            builtin(args);
+            builtin(args, out, in);
         }
         else {
-            pipe(pipefd);
-            out = cmds[n+1] ? pipefd[1] : STDOUT_FILENO;
             execute(args, out, in);
-            in = pipefd[0];
         }
+
+        in = pipefd[0];
     }
     // Wait for all child processes
     while (wait(NULL) > 0);
