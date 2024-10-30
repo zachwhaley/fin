@@ -27,9 +27,12 @@ Use `exit` command to exit fin.
 ```sh
 $ make
 $ ./fin
-> ls
+𝑓 set fin=cool
+𝑓 get fin
+cool
+𝑓 ls
 builtin.c  builtin.h  execute.c  execute.h  fin.c  LICENSE  Makefile  README.md  str.h
-> ls | grep fin
+𝑓 ls | grep fin
 fin.c
-> exit
+𝑓 exit
 ```

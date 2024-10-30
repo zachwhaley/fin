@@ -7,21 +7,21 @@
 #include <string.h>
 
 struct Builtin builtins[] = {
-    { "exit", bltn_exit },
-    { "cd",   bltn_cd },
-    { "get",  bltn_get },
-    { "set",  bltn_set },
+    { "exit", builtin_exit },
+    { "cd",   builtin_cd },
+    { "get",  builtin_get },
+    { "set",  builtin_set },
     // End of builtins
-    { '\0', NULL }
+    { NULL, NULL }
 };
 
-void bltn_exit(char *const args[])
+void builtin_exit(char *const args[])
 {
     int code = args[1] ? atoi(args[1]) : 0;
     exit(code);
 }
 
-void bltn_cd(char *const args[])
+void builtin_cd(char *const args[])
 {
     char *dir = args[1] ?: getenv("HOME");
     if (dir) {
@@ -29,7 +29,7 @@ void bltn_cd(char *const args[])
     }
 }
 
-void bltn_get(char *const args[])
+void builtin_get(char *const args[])
 {
     for (int i = 1; args[i]; i++) {
         char *val = getenv(args[i]);
@@ -37,7 +37,7 @@ void bltn_get(char *const args[])
     }
 }
 
-void bltn_set(char *const args[])
+void builtin_set(char *const args[])
 {
     for (int i = 1; args[i]; i++) {
         char *name = args[i];

@@ -12,7 +12,7 @@
 void read_cmd(char *cmd, int len)
 {
     // Print prompt
-    printf("> ");
+    printf("𝑓 ");
     fgets(cmd, len, stdin);
 }
 
