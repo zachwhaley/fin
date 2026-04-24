@@ -8,31 +8,52 @@ fin is a simply made Unix shell written in C
 
 [GNU GCC](http://gcc.gnu.org/)
 
-```bash
-$ sudo dnf install gcc
+## How to build it
+
+```sh
+$ make
 ```
 
 ## What it Does
 
-Navigates the system with `cd`.
+### Builtin commands
 
-Sets and prints environment variables `set` and `get`.
+| Command | Usage | Description |
+|---------|-------|-------------|
+| `cd` | `cd [dir]` | Change the current directory. Defaults to `$HOME`. |
+| `echo` | `echo [args ...]` | Write arguments to standard output. |
+| `exit` | `exit [code]` | Exit the shell with an optional exit code. |
+| `get` | `get VAR ...` | Print the value of one or more environment variables. |
+| `help` | `help [cmd]` | List builtin commands, or show help for a specific command. |
+| `set` | `set VAR=VAL ...` | Set one or more environment variables. |
 
-Runs system commands.
+### Piping
 
-Use `exit` command to exit fin.
+Connect commands with `|` to pipe the output of one into the input of the next.
 
-## How to Use it
+### Redirecting
+
+Redirect input and output with `<`, `>`, and `>>`.
+
+## Examples
 
 ```sh
-$ make
 $ ./fin
-𝑓 set fin=cool
-𝑓 get fin
-cool
-𝑓 ls
-builtin.c  builtin.h  execute.c  execute.h  fin.c  LICENSE  Makefile  README.md  str.h
+𝑓 set GREETING=hello
+𝑓 get GREETING
+hello
+𝑓 echo fin is cool
+fin is cool
+𝑓 echo fin is cool > fin.txt
+𝑓 echo fin is also fun >> fin.txt
+𝑓 cat fin.txt
+fin is cool
+fin is also fun
+𝑓 grep cool < fin.txt
+fin is cool
 𝑓 ls | grep fin
+fin
 fin.c
+fin.txt
 𝑓 exit
 ```
