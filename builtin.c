@@ -13,6 +13,7 @@ struct Builtin builtins[] = {
     { "cd",   builtin_cd },
     { "get",  builtin_get },
     { "set",  builtin_set },
+    { "echo",  builtin_echo },
     // End of builtins
     { NULL, NULL }
 };
@@ -53,5 +54,17 @@ void builtin_set(char *const args[], int out, int in)
         *val++ = '\0';
         setenv(name, val, 1);
     }
+    close_pipe(out, in);
+}
+
+void builtin_echo(char *const args[], int out, int in)
+{
+    for (int i = 1; args[i]; i++) {
+        dprintf(out, "%s", args[i]);
+        if (args[i+1]) {
+            dprintf(out, " ");
+        }
+    }
+    dprintf(out, "\n");
     close_pipe(out, in);
 }

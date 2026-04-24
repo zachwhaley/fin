@@ -13,3 +13,4 @@ void builtin_exit(char *const args[], int out, int in);
 void builtin_cd(char *const args[], int out, int in);
 void builtin_get(char *const args[], int out, int in);
 void builtin_set(char *const args[], int out, int in);
+void builtin_echo(char *const args[], int out, int in);
