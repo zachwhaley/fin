@@ -9,11 +9,13 @@
 #include <stdbool.h>
 #include <sys/wait.h>
 
-void read_cmd(char *cmd, int len)
+bool read_cmd(char *cmd, int len)
 {
     // Print prompt
     printf("𝑓 ");
-    fgets(cmd, len, stdin);
+    char *line = fgets(cmd, len, stdin);
+    // If the line is NULL, then the shell has nothing to read and should exit cleanly.  This can happen when CTRL-D is pressed.
+    return line != NULL;
 }
 
 void exec_cmd(char *cmd)
@@ -29,7 +31,7 @@ void exec_cmd(char *cmd)
         char *args[128];
         split(cmds[n], args, " \n");
 
-        // If no commands provided, continue
+        // If no command provided, continue
         if (!args[0]) {
             continue;
         }
@@ -69,8 +71,7 @@ void exec_cmd(char *cmd)
 int main()
 {
     char cmd[1024];
-    while (true) {
-        read_cmd(cmd, sizeof cmd);
+    while (read_cmd(cmd, sizeof cmd)) {
         exec_cmd(cmd);
     }
 }
