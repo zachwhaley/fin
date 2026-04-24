@@ -9,6 +9,19 @@
 #include <stdlib.h>
 #include <string.h>
 
+struct Feature {
+    const char *usage;
+    const char *desc;
+};
+
+static struct Feature features[] = {
+    { "cmd | cmd",   "Pipe the output of one command into the input of the next." },
+    { "cmd > file",  "Redirect output to a file, overwriting it."                 },
+    { "cmd >> file", "Redirect output to a file, appending to it."                },
+    { "cmd < file",  "Redirect input from a file."                                },
+    { NULL, NULL }
+};
+
 struct Builtin builtins[] = {
     { "exit", "exit [code]",     "Exit the shell with an optional exit code.",                  builtin_exit },
     { "cd",   "cd [dir]",        "Change the current directory. Defaults to $HOME.",            builtin_cd },
@@ -39,7 +52,7 @@ void builtin_get(char *const args[], int out, int in)
 {
     for (int i = 1; args[i]; i++) {
         char *val = getenv(args[i]);
-        dprintf(out, "%s", val ?: "");
+        dprintf(out, "%s\n", val ?: "");
     }
     close_pipe(out, in);
 }
@@ -83,8 +96,13 @@ void builtin_help(char *const args[], int out, int in)
         }
         dprintf(out, "help: no such builtin: %s\n", args[1]);
     } else {
+        dprintf(out, "Builtin commands:\n");
         for (int i = 0; builtins[i].name; i++) {
-            dprintf(out, "%-20s %s\n", builtins[i].usage, builtins[i].desc);
+            dprintf(out, "  %-20s %s\n", builtins[i].usage, builtins[i].desc);
+        }
+        dprintf(out, "\nShell features:\n");
+        for (int i = 0; features[i].usage; i++) {
+            dprintf(out, "  %-20s %s\n", features[i].usage, features[i].desc);
         }
     }
     close_pipe(out, in);
