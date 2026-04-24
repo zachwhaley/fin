@@ -29,6 +29,11 @@ void exec_cmd(char *cmd)
         char *args[128];
         split(cmds[n], args, " \n");
 
+        // If no commands provided, continue
+        if (!args[0]) {
+            continue;
+        }
+
         // Look for builtin functions
         int i;
         for (i = 0; builtins[i].name; i++) {
