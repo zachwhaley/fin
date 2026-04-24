@@ -1,6 +1,7 @@
 #include "builtin.h"
 
 #include "io.h"
+#include "str.h"
 
 #include <unistd.h>
 
@@ -9,13 +10,14 @@
 #include <string.h>
 
 struct Builtin builtins[] = {
-    { "exit", builtin_exit },
-    { "cd",   builtin_cd },
-    { "get",  builtin_get },
-    { "set",  builtin_set },
-    { "echo",  builtin_echo },
+    { "exit", "exit [code]",     "Exit the shell with an optional exit code.",                  builtin_exit },
+    { "cd",   "cd [dir]",        "Change the current directory. Defaults to $HOME.",            builtin_cd },
+    { "get",  "get VAR ...",     "Print the value of one or more environment variables.",       builtin_get },
+    { "set",  "set VAR=VAL ...", "Set one or more environment variables.",                      builtin_set },
+    { "echo", "echo [args ...]", "Write arguments to standard output.",                         builtin_echo },
+    { "help", "help [cmd]",      "List builtin commands, or show help for a specific command.", builtin_help },
     // End of builtins
-    { NULL, NULL }
+    { NULL, NULL, NULL, NULL }
 };
 
 void builtin_exit(char *const args[], int out, int in)
@@ -66,5 +68,24 @@ void builtin_echo(char *const args[], int out, int in)
         }
     }
     dprintf(out, "\n");
+    close_pipe(out, in);
+}
+
+void builtin_help(char *const args[], int out, int in)
+{
+    if (args[1]) {
+        for (int i = 0; builtins[i].name; i++) {
+            if (streq(builtins[i].name, args[1])) {
+                dprintf(out, "%s\n  %s\n", builtins[i].usage, builtins[i].desc);
+                close_pipe(out, in);
+                return;
+            }
+        }
+        dprintf(out, "help: no such builtin: %s\n", args[1]);
+    } else {
+        for (int i = 0; builtins[i].name; i++) {
+            dprintf(out, "%-20s %s\n", builtins[i].usage, builtins[i].desc);
+        }
+    }
     close_pipe(out, in);
 }
