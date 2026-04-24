@@ -37,10 +37,15 @@ void exec_cmd(char *cmd)
         }
         BuiltinFunc builtin = builtins[i].func;
 
-        // Pipe and setup STDOUT
-        pipe(pipefd);
+        /* Pipe and setup STDOUT/STDIN */
+
         // If there is another command, pipe output to the next command; otherwise pipe output to stdout.
-        out = cmds[n+1] ? pipefd[1] : STDOUT_FILENO;
+        if (cmds[n+1]) {
+            pipe(pipefd);
+            out = pipefd[1];
+        } else {
+            out = STDOUT_FILENO;
+        }
 
         if (builtin) {
             builtin(args, out, in);
@@ -49,7 +54,8 @@ void exec_cmd(char *cmd)
             execute(args, out, in);
         }
 
-        in = pipefd[0];
+        // If there is another command, pipe input to the next command; otherwise pipe input to stdin.
+        in = cmds[n+1] ? pipefd[0] : STDIN_FILENO;
     }
     // Wait for all child processes
     while (wait(NULL) > 0);
