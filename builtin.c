@@ -46,6 +46,10 @@ void builtin_set(char *const args[], int out, int in)
     for (int i = 1; args[i]; i++) {
         char *name = args[i];
         char *val = strchr(name, '=');
+        if (!val) {
+            fprintf(stderr, "ERROR[set]: %s missing '='\n", name);
+            continue;
+        }
         *val++ = '\0';
         setenv(name, val, 1);
     }
