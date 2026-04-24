@@ -3,21 +3,22 @@
 #include "io.h"
 
 #include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/wait.h>
+
+static const int CMD_NOT_FOUND = 127;
 
 int execute(char *const args[], int out, int in)
 {
     pid_t pid = fork();
     if (pid == 0) {
         // Duplicate and close pipe in child process
-        if (out != STDOUT_FILENO) {
-            dup2(out, STDOUT_FILENO);
-        }
-        if (in != STDIN_FILENO) {
-            dup2(in, STDIN_FILENO);
-        }
+        duplicate_pipe(out, in);
         close_pipe(out, in);
         execvp(*args, args);
+        perror(*args);
+        exit(CMD_NOT_FOUND);
     }
     else {
         // Close pipe in parent process
